@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import * as authApi from "@/src/api/auth";
-import { clearSession, loadSession } from "@/src/api/tokenStore";
+import { clearSession, loadSession, subscribeSession } from "@/src/api/tokenStore";
 import { useSyncOnSession } from "@/src/hooks/useSyncOnSession";
 import { sincronizarTodo } from "@/src/services/syncService";
 import type { Session } from "@/src/types";
@@ -41,6 +41,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  useEffect(() => {
+    return subscribeSession(() => {
+      setSession(null);
+    });
   }, []);
 
   const sincronizar = useCallback(async (): Promise<void> => {

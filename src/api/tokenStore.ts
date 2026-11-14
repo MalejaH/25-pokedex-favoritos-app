@@ -5,6 +5,23 @@ const STORAGE_KEY = "pokedex.sesion";
 
 let cachedSession: Session | null = null;
 
+type SessionListener = () => void;
+
+const listeners = new Set<SessionListener>();
+
+export function subscribeSession(listener: SessionListener): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function notifySessionCleared(): void {
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
 function isSession(value: unknown): value is Session {
   if (value === null || typeof value !== "object") {
     return false;
@@ -50,6 +67,7 @@ export async function saveSession(session: Session): Promise<void> {
 export async function clearSession(): Promise<void> {
   cachedSession = null;
   await SecureStore.deleteItemAsync(STORAGE_KEY);
+  notifySessionCleared();
 }
 
 export async function updateTokens(
