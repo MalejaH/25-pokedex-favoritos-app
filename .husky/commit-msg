@@ -1,0 +1,6 @@
+message=$(cat "$1")
+pattern="^(feat|fix|test|chore|docs|refactor|perf|ci|build|revert)(\([a-z0-9-]+\))?: .{5,}"
+echo "$message" | grep -qE "$pattern" || {
+  echo "Commit invalido. Use: feat: descripcion (min. 5 caracteres)." >&2
+  exit 1
+}
