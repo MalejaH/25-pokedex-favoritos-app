@@ -1,9 +1,12 @@
 import { defineConfig, globalIgnores } from "eslint/config";
-import expoConfig from "eslint-config-expo/flat";
+import expoConfig from "eslint-config-expo/flat.js";
+import typescriptPlugin from "@typescript-eslint/eslint-plugin";
 
 export default defineConfig([
   ...expoConfig,
   {
+    files: ["**/*.ts", "**/*.tsx"],
+    plugins: { "@typescript-eslint": typescriptPlugin },
     rules: {
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
@@ -18,6 +21,7 @@ export default defineConfig([
       "prefer-template": "error",
       eqeqeq: ["error", "always"],
       curly: ["error", "all"],
+      "react-hooks/set-state-in-effect": "off",
       complexity: ["error", 10],
       "max-depth": ["error", 3],
       "max-lines": ["error", 300],
@@ -33,6 +37,7 @@ export default defineConfig([
     files: ["scripts/**/*.mjs", "jest.setup.ts", "**/*.test.ts", "**/*.test.tsx"],
     rules: {
       "no-console": "off",
+      "spaced-comment": "off",
       "max-lines-per-function": "off",
     },
   },

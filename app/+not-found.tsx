@@ -1,40 +1,40 @@
-import { Link, Stack } from "expo-router";
-import { StyleSheet } from "react-native";
-
-import { Text, View } from "@/components/Themed";
+import { Link } from "expo-router";
+import { StyleSheet, Text, View } from "react-native";
+import { colores, espacios } from "@/src/theme";
 
 export default function NotFoundScreen() {
   return (
-    <>
-      <Stack.Screen options={{ title: "Oops!" }} />
-      <View style={styles.container}>
-        <Text style={styles.title}>This screen doesn't exist.</Text>
-
-        <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Go to home screen!</Text>
-        </Link>
-      </View>
-    </>
+    <View style={styles.contenedor}>
+      <Text style={styles.titulo}>Ruta no encontrada</Text>
+      <Text style={styles.texto}>La pantalla que buscas no existe.</Text>
+      <Link href="/" style={styles.enlace}>
+        Volver a la Pokédex
+      </Link>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  contenedor: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    padding: espacios.lg,
+    backgroundColor: colores.fondo,
+    gap: espacios.sm,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
+  titulo: {
+    color: colores.texto,
+    fontSize: 22,
+    fontWeight: "900",
   },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
+  texto: {
+    color: colores.textoSuave,
+    fontSize: 13,
   },
-  linkText: {
-    fontSize: 14,
-    color: "#2e78b7",
+  enlace: {
+    color: colores.marca,
+    fontWeight: "800",
+    marginTop: espacios.sm,
   },
 });

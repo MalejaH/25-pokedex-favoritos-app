@@ -1,4 +1,4 @@
-/* eslint-env jest */
+/// <reference types="jest" />
 
 jest.mock("expo-secure-store", () => ({
   getItemAsync: jest.fn().mockResolvedValue(null),
