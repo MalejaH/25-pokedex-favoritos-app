@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { EmptyState, ErrorState, LoadingState } from "@/src/components/StateViews";
 import { PokedexHeader } from "@/src/components/PokedexHeader";
 import { Screen } from "@/src/components/Screen";
@@ -107,9 +107,15 @@ function ListaPokedex({
 
 export function PokedexListScreen() {
   const lista = usePokedexList();
-  const { favoritos, alternar } = useFavoritoIds();
+  const { favoritos, alternar, recargar } = useFavoritoIds();
   const equipo = useEquipoActions();
   const router = useRouter();
+
+  useFocusEffect(
+    useCallback(() => {
+      void recargar();
+    }, [recargar]),
+  );
 
   const abrir = useCallback(
     (pokemonId: number) => {
