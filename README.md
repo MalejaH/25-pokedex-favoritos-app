@@ -126,6 +126,14 @@ Ver [`IA.md`](IA.md), [`ia/CONFIGURACION.md`](ia/CONFIGURACION.md),
 [`ia/PRUEBAS-CONTENCION.md`](ia/PRUEBAS-CONTENCION.md) y
 [`ia/BITACORA.md`](ia/BITACORA.md). La configuración está en el primer commit.
 
+## Guías del proyecto
+
+- [`docs/GUIA-FINALIZACION.md`](docs/GUIA-FINALIZACION.md): pasos para Firebase,
+  Vercel, ejecución local, EAS/APK, evidencias y entrega.
+- [`docs/GUIA-SUSTENTACION.md`](docs/GUIA-SUSTENTACION.md): contexto,
+  funcionalidad, arquitectura, demo, seguridad, pruebas, IA y preguntas
+  frecuentes.
+
 ## Capturas
 
 Guarde las capturas del APK en `docs/capturas/` con estos nombres:
