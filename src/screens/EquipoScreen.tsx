@@ -42,29 +42,41 @@ function ListaSlots({
 function AccionesEquipo({
   onAgregar,
   onAleatorio,
+  onSalir,
 }: {
   onAgregar: () => void;
   onAleatorio: () => void;
+  onSalir: () => void;
 }) {
   return (
-    <View style={styles.acciones}>
+    <>
+      <View style={styles.acciones}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Ir a la Pokédex para agregar Pokémon"
+          onPress={onAgregar}
+          style={[styles.boton, styles.botonPrincipal]}
+        >
+          <Text style={styles.botonPrincipalTexto}>Añadir desde la Pokédex</Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Agregar un Pokémon aleatorio al equipo"
+          onPress={onAleatorio}
+          style={styles.boton}
+        >
+          <Text style={styles.botonTexto}>🎲 Aleatorio</Text>
+        </Pressable>
+      </View>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Ir a la Pokédex para agregar Pokémon"
-        onPress={onAgregar}
-        style={[styles.boton, styles.botonPrincipal]}
+        accessibilityLabel="Cerrar sesión"
+        onPress={onSalir}
+        style={styles.salir}
       >
-        <Text style={styles.botonPrincipalTexto}>Añadir desde la Pokédex</Text>
+        <Text style={styles.salirTexto}>Cerrar sesión</Text>
       </Pressable>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Agregar un Pokémon aleatorio al equipo"
-        onPress={onAleatorio}
-        style={styles.boton}
-      >
-        <Text style={styles.botonTexto}>🎲 Aleatorio</Text>
-      </Pressable>
-    </View>
+    </>
   );
 }
 
@@ -76,6 +88,7 @@ function ContenidoEquipo({
   abrir,
   onAgregar,
   onAleatorio,
+  onSalir,
 }: {
   equipo: EquipoItem[];
   mensaje: string | null;
@@ -84,6 +97,7 @@ function ContenidoEquipo({
   abrir: (pokemonId: number) => void;
   onAgregar: () => void;
   onAleatorio: () => void;
+  onSalir: () => void;
 }) {
   return (
     <>
@@ -94,7 +108,7 @@ function ContenidoEquipo({
       </Text>
       <Aviso mensaje={mensaje} onCerrar={onCerrarMensaje} tono="aviso" />
       <ListaSlots equipo={equipo} quitar={quitar} abrir={abrir} />
-      <AccionesEquipo onAgregar={onAgregar} onAleatorio={onAleatorio} />
+      <AccionesEquipo onAgregar={onAgregar} onAleatorio={onAleatorio} onSalir={onSalir} />
     </>
   );
 }
@@ -125,7 +139,7 @@ function PantallaEstado({
 export function EquipoScreen() {
   const { equipo, loading, error, recargar } = useEquipo();
   const acciones = useEquipoActions();
-  const { sincronizar } = useSession();
+  const { sincronizar, logout } = useSession();
   const router = useRouter();
 
   useFocusEffect(
@@ -146,6 +160,10 @@ export function EquipoScreen() {
     await recargar();
   }, [acciones, recargar]);
 
+  const salir = useCallback(async (): Promise<void> => {
+    await logout();
+  }, [logout]);
+
   if (loading || error !== null) {
     return <PantallaEstado loading={loading} error={error} recargar={recargar} />;
   }
@@ -165,6 +183,9 @@ export function EquipoScreen() {
         onAgregar={() => router.push("/")}
         onAleatorio={() => {
           void aleatorio();
+        }}
+        onSalir={() => {
+          void salir();
         }}
       />
     </ScrollScreen>
@@ -220,5 +241,15 @@ const styles = StyleSheet.create({
     color: colores.texto,
     fontWeight: "800",
     fontSize: 12,
+  },
+  salir: {
+    marginTop: espacios.md,
+    paddingVertical: espacios.sm,
+    alignItems: "center",
+  },
+  salirTexto: {
+    color: colores.peligro,
+    fontSize: 12,
+    fontWeight: "700",
   },
 });
