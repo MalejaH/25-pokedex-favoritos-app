@@ -126,19 +126,16 @@ Ver [`IA.md`](IA.md), [`ia/CONFIGURACION.md`](ia/CONFIGURACION.md),
 [`ia/PRUEBAS-CONTENCION.md`](ia/PRUEBAS-CONTENCION.md) y
 [`ia/BITACORA.md`](ia/BITACORA.md). La configuración está en el primer commit.
 
-## Guías del proyecto
+## API y APK
 
-- [`docs/GUIA-FINALIZACION.md`](docs/GUIA-FINALIZACION.md): pasos para Firebase,
-  Vercel, ejecución local, EAS/APK, evidencias y entrega.
-- [`docs/GUIA-SUSTENTACION.md`](docs/GUIA-SUSTENTACION.md): contexto,
-  funcionalidad, arquitectura, demo, seguridad, pruebas, IA y preguntas
-  frecuentes.
+- API desplegada: <https://25-pokedex-favoritos-api.vercel.app>
+- APK (perfil `preview`): <https://expo.dev/artifacts/eas/lfM6plYGftRUXnOsx-iy5g_bLkKsJh8MHwoYyAcabUw.apk>
 
 ## Capturas
 
-Guarde las capturas del APK en `docs/capturas/` con estos nombres:
-`01-login.png`, `02-lista.png`, `03-favoritos.png`, `04-detalle-3d.png`,
-`05-equipo.png`. Ver `docs/capturas/README.md`.
+Las capturas están en `docs/capturas/`:
+`01-login.png`, `02-lista.png`, `03-favoritos.png`, `04-detalle-3d.png` y
+`05-equipo.png`.
 
 > Nota: la exportación web de `expo-sqlite` requiere un `.wasm` que el paquete no
 > incluye en esta versión; el objetivo del proyecto es Android/iOS. La CI valida el
