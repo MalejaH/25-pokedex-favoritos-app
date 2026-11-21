@@ -41,5 +41,5 @@ export default defineConfig([
       "max-lines-per-function": "off",
     },
   },
-  globalIgnores(["dist/**", "coverage/**", ".expo/**", "node_modules/**"]),
+  globalIgnores(["dist/**", "coverage/**", ".expo/**", "node_modules/**", "expo-env.d.ts"]),
 ]);
