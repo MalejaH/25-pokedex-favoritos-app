@@ -1,13 +1,13 @@
 import { useCallback } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { EmptyState, ErrorState, LoadingState } from "@/src/components/StateViews";
 import { PokedexHeader } from "@/src/components/PokedexHeader";
-import { Screen } from "@/src/components/Screen";
+import { PokemonCard } from "@/src/components/PokemonCard";
+import { ScrollScreen } from "@/src/components/Screen";
 import { useEquipoActions } from "@/src/hooks/useEquipoActions";
 import { useFavoritoIds } from "@/src/hooks/useFavoritoIds";
 import { usePokedexList } from "@/src/hooks/usePokedexList";
-import { usePokemonRenderer } from "@/src/hooks/usePokemonRenderer";
 import { useShake } from "@/src/sensors/useShake";
 import { randomPokemonId } from "@/src/services/pokemonService";
 import { colores, espacios } from "@/src/theme";
@@ -47,19 +47,33 @@ function EstadoLista({
   );
 }
 
-function PieLista({ cargando }: { cargando: boolean }) {
-  if (!cargando) {
-    return null;
-  }
+function ListaPokemon({
+  items,
+  favoritos,
+  alternar,
+  agregarEquipo,
+  abrir,
+}: Pick<ListaProps, "favoritos" | "alternar" | "agregarEquipo" | "abrir"> & {
+  items: ListaProps["lista"]["items"];
+}) {
   return (
-    <View style={styles.footer}>
-      <ActivityIndicator color={colores.marca} />
-    </View>
+    <>
+      {items.map((item) => (
+        <PokemonCard
+          key={item.id}
+          pokemon={item}
+          esFavorito={favoritos.has(item.id)}
+          onAbrir={() => abrir(item.id)}
+          onFavorito={() => {
+            void alternar(item.id);
+          }}
+          onEquipo={() => {
+            void agregarEquipo(item.id);
+          }}
+        />
+      ))}
+    </>
   );
-}
-
-function RefrescarLista({ refreshing, onRefresh }: { refreshing: boolean; onRefresh: () => void }) {
-  return <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colores.marca} />;
 }
 
 function ListaPokedex({
@@ -73,35 +87,43 @@ function ListaPokedex({
   abrirAleatorio,
   shakeDisponible,
 }: ListaProps) {
-  const renderItem = usePokemonRenderer(favoritos, alternar, agregarEquipo, abrir);
-
   return (
-    <FlatList
-      data={lista.items}
-      keyExtractor={(item) => String(item.id)}
-      renderItem={renderItem}
-      ListHeaderComponent={
-        <PokedexHeader
-          query={lista.query}
-          onChangeQuery={lista.setQuery}
-          total={lista.total}
-          offline={lista.offline}
-          mensaje={mensajeEquipo}
-          onAleatorio={abrirAleatorio}
-          shakeDisponible={shakeDisponible}
-          onCerrarMensaje={limpiarMensaje}
+    <>
+      <PokedexHeader
+        query={lista.query}
+        onChangeQuery={lista.setQuery}
+        total={lista.total}
+        offline={lista.offline}
+        mensaje={mensajeEquipo}
+        onAleatorio={abrirAleatorio}
+        shakeDisponible={shakeDisponible}
+        onCerrarMensaje={limpiarMensaje}
+      />
+      {lista.items.length === 0 ? (
+        <EstadoLista lista={lista} onLimpiar={() => lista.setQuery("")} />
+      ) : (
+        <ListaPokemon
+          items={lista.items}
+          favoritos={favoritos}
+          alternar={alternar}
+          agregarEquipo={agregarEquipo}
+          abrir={abrir}
         />
-      }
-      ListEmptyComponent={<EstadoLista lista={lista} onLimpiar={() => lista.setQuery("")} />}
-      ListFooterComponent={<PieLista cargando={lista.loadingMore} />}
-      onEndReached={() => void lista.cargarMas()}
-      onEndReachedThreshold={0.4}
-      keyboardShouldPersistTaps="handled"
-      refreshControl={
-        <RefrescarLista refreshing={lista.refreshing} onRefresh={() => void lista.recargar()} />
-      }
-      contentContainerStyle={styles.lista}
-    />
+      )}
+      {lista.loadingMore ? (
+        <View style={styles.footer}>
+          <ActivityIndicator color={colores.marca} />
+        </View>
+      ) : null}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Cargar más Pokémon"
+        onPress={() => void lista.cargarMas()}
+        style={styles.cargarMas}
+      >
+        <Text style={styles.cargarMasTexto}>Cargar más</Text>
+      </Pressable>
+    </>
   );
 }
 
@@ -129,7 +151,15 @@ export function PokedexListScreen() {
   const shakeDisponible = useShake(abrirAleatorio);
 
   return (
-    <Screen>
+    <ScrollScreen
+      onScroll={({ nativeEvent }) => {
+        const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+        if (contentOffset.y + layoutMeasurement.height >= contentSize.height - 240) {
+          void lista.cargarMas();
+        }
+      }}
+      scrollEventThrottle={250}
+    >
       <ListaPokedex
         lista={lista}
         favoritos={favoritos}
@@ -141,16 +171,22 @@ export function PokedexListScreen() {
         abrirAleatorio={abrirAleatorio}
         shakeDisponible={shakeDisponible}
       />
-    </Screen>
+    </ScrollScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  lista: {
-    paddingBottom: espacios.xl,
-    flexGrow: 1,
-  },
   footer: {
     paddingVertical: espacios.lg,
+    alignItems: "center",
+  },
+  cargarMas: {
+    paddingVertical: espacios.md,
+    alignItems: "center",
+  },
+  cargarMasTexto: {
+    color: colores.textoSuave,
+    fontSize: 12,
+    fontWeight: "700",
   },
 });
